@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Ganti DATA_URL menjadi DATABASE_URL
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  profilePicture String?
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  name           String?
+  password       String
+  posts          Post[]
+  profile        Profile?
+  createdAt      DateTime   @default(now())
+  role           Role       @default(USER)
+  verifyToken    String?
+  tokenCreatedAt DateTime?
+  tokenExpiresAt DateTime?
+  bookMarks      BookMark[]
+  articles       Article[]
+  isOnline       Boolean    @default(false)
+}
+
+model BookMark {
+  id     String @id @default(cuid())
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+}
+
+model Profile {
+  image  String?
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId Int     @unique
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  published  Boolean    @default(false)
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  categories Category[]
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String
+  image     String?
+  have      String?
+  authorId  Int?
+  author    User?    @relation(fields: [authorId], references: [id])
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
+}
+
+model Book {
+  id          String     @id @default(cuid())
+  title       String
+  author      String
+  genre       Genre[]    @relation("BookGenres")
+  publishedAt DateTime
+  updatedAt   DateTime   @updatedAt
+  coverImage  String?
+  chapters    Chapter[]
+  bookMarks   BookMark[]
+  synopsis    String?    
+  status      Status     @default(Ongoing)
+}
+
+model Genre {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  books  Book[]  @relation("BookGenres")
+}
+
+model Chapter {
+  id      String @id @default(cuid())
+  title   String
+  bookId  String
+  book    Book   @relation(fields: [bookId], references: [id])
+  content String
+}
+
+enum Status {
+  Ongoing
+  Drop
+  Hiatus
+  Complete
+}
+
+enum Role {
+  USER
+  ADMIN
+}
