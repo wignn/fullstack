@@ -17,11 +17,28 @@ const getUserById = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id: Number(req.params.id) },
     });
+    
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+const GetusersName = async (req, res) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: { name: req.params.name },
+      include: { profile: true } 
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
 // Create user with validation
 const createUser = async (req, res) => {
@@ -157,5 +174,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserByEmail,
+  GetusersName
   // registerUser,
 };

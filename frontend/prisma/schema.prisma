@@ -12,12 +12,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
 model Message {
-  id        Int      @id @default(autoincrement())
-  sender    String
-  content   String
-  sentAt    DateTime @default(now())
+  id      Int      @id @default(autoincrement())
+  sender  String
+  content String
+  sentAt  DateTime @default(now())
+  Avater  String?
 }
+
 
 model User {
   profilePicture String?

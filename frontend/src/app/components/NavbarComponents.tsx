@@ -64,7 +64,7 @@ const Navbar = () => {
           <div className="relative">
             <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-md">
               <Image
-                src={userImage || "/default-avatar.jpg"}
+                src={userImage || img}
                 width={40}
                 height={40}
                 alt="User avatar"

@@ -85,14 +85,14 @@ model Book {
   coverImage  String?
   chapters    Chapter[]
   bookMarks   BookMark[]
-  synopsis    String?    
+  synopsis    String?
   status      Status     @default(Ongoing)
 }
 
 model Genre {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique
-  books  Book[]  @relation("BookGenres")
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[] @relation("BookGenres")
 }
 
 model Chapter {
@@ -114,10 +114,11 @@ enum Role {
   USER
   ADMIN
 }
-model Message {
-  id        Int      @id @default(autoincrement())
-  sender    String
-  content   String
-  sentAt    DateTime @default(now())
-}
 
+model Message {
+  id      Int      @id @default(autoincrement())
+  sender  String
+  content String
+  sentAt  DateTime @default(now())
+  Avater  String?
+}
