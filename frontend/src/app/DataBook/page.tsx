@@ -1,40 +1,40 @@
-'use client';
-import axios from "axios";
-import { useEffect, useState } from "react";
+import Search from "../components/Book/search";
+import BookTable from "@/app/components/Book/Book-table";
+import { CreateButton } from "@/app/components/Book/buttons";
+import { GetbookPages } from "@/lib/data";
+import Pagination from "../components/Book/pagination";
+import Navbar from "../components/NavbarComponents";
+import  Footer from '@/app/components/Footer'
 
-const ListBook = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-  const [books, setBooks] = useState([]);
+const DataBook = async ({
+  searchParams,
+}: {
+  searchParams?: { query?: string; page?: string };
+}) => {
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/books`);
-        setBooks(response.data.reverse()); 
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const totalPages = await GetbookPages(query);
 
   return (
-    <div className="book-list-container">
-      {books.map((book, index) => (
-        <div key={index} className="book-card bg-white p-6 rounded-lg shadow-md mb-4">
-          <h2 className="text-lg font-bold text-gray-900">{book.title}</h2>
-          <p className="text-sm text-gray-600">Author: {book.author}</p>
-          <p className="text-gray-700 mt-2">{book.synopsis}</p>
-          <img 
-          src={book.coverImage || '/path/to/placeholder-image.png'} 
-          alt={`${book.title} cover`} 
-          className="w-full h-64 object-cover rounded-md mt-4"
-        />
+    <div className="bg-slate-500 min-h-full min-w-full">
+      <Navbar/>
+      <div className="flex items-center justify-center gap-2 m-16 mb-2">
+        <Search />
+        <CreateButton />
+      </div>
+      <div className="- flex flex-col items-center px-4 pb-10">
+        <div className="w-full mx-auto">
+          <BookTable query={query} currentPage={currentPage} />
+          <div className="flex justify-center items-center mt-4 mb-0">
+            <Pagination totalPages={totalPages} />
+          </div>
         </div>
-      ))}
+      </div>
+
+        <Footer/>
     </div>
   );
 };
 
-export default ListBook;
+export default DataBook;

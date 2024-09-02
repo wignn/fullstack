@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-
+import Navbar from "./NavbarComponents";
+import { SetatusUser } from "../admin/users/userData";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +37,10 @@ export default function LoginForm() {
       if (res?.error) {
         setError("Login failed: " + res.error);
       } else if (res?.ok) {
+  
+        const result = formValues.email
+        await SetatusUser(result);
+      
         setStatus("Login successful!");
         setTimeout(() => {
           window.location.href = "/";
@@ -51,6 +56,7 @@ export default function LoginForm() {
 
   return (
     <div>
+      <Navbar />
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="bg-gray-800 text-gray-200 rounded-lg shadow-lg p-8 w-full max-w-md">
           <h2 className="text-2xl font-semibold text-gray-50 text-center mb-8">

@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/userRoutes');
 const BookRoutes = require('./src/routes/bookRaoute')
+const ProfileRoutes = require ('./src/routes/ProfileRoute')
+const MsgRoute = require ('./src/routes/MsgRoute')
 
 
 dotenv.config();
@@ -20,7 +22,8 @@ app.use((req, res, next) => {
 // Use routes
 app.use('/users', userRoutes);
 app.use('/books', BookRoutes)
-
+app.use('/profiles', ProfileRoutes)
+app.use('/Msg', MsgRoute) 
 // Test API
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'API is working' });

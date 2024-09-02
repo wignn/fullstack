@@ -7,8 +7,7 @@ export default function RegisterForm() {
   const [formValues, setFormValues] = useState({ name: '', email: '', password: '', confirm: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   function handleInput(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -21,7 +20,7 @@ export default function RegisterForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsSubmitting(true); 
 
     if (formValues.password !== formValues.confirm) {
       setIsSubmitting(false);
@@ -34,20 +33,16 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/users/register`, {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formValues.name,
-          email: formValues.email,
-          password: formValues.password,
-        }),
+        body: JSON.stringify(formValues),
       });
 
       if (!res.ok) {
-        setIsSubmitting(false);
+        setIsSubmitting(false); 
         return alert('Registration failed');
       }
 
@@ -58,12 +53,12 @@ export default function RegisterForm() {
       }, 2000);
     } catch (error) {
       console.log(error);
-      setIsSubmitting(false);
+      setIsSubmitting(false); 
     }
   }
 
   return (
-    <div className="flex items-center justify-center py-8">
+    <div className=" flex items-center justify-center py-8">
       <div className="w-full max-w-md mx-auto bg-white bg-opacity-25 shadow-lg border-2 border-purple-600 rounded-lg p-8">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">Register</h2>
         <form onSubmit={handleSubmit}>
@@ -143,7 +138,7 @@ export default function RegisterForm() {
           </div>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting} 
             className={`w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg transition-transform duration-300 hover:from-purple-600 hover:to-blue-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {isSubmitting ? 'Registering...' : 'Register'}
