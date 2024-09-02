@@ -1,5 +1,4 @@
 const prisma = require('../config/db');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 // Get all users
@@ -102,54 +101,54 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-// Register user
-const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+// // Register user
+// const registerUser = async (req, res) => {
+//   const { name, email, password } = req.body;
 
-  if (!name || !name.trim()) {
-    return res.status(400).json({ message: 'Name is required and cannot be empty or only whitespace.' });
-  }
-  if (!email || !email.trim()) {
-    return res.status(400).json({ message: 'Email is required and cannot be empty or only whitespace.' });
-  }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: 'Invalid email format.' });
-  }
-  if (!password || password.length < 8) {
-    return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
-  }
+//   if (!name || !name.trim()) {
+//     return res.status(400).json({ message: 'Name is required and cannot be empty or only whitespace.' });
+//   }
+//   if (!email || !email.trim()) {
+//     return res.status(400).json({ message: 'Email is required and cannot be empty or only whitespace.' });
+//   }
+//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   if (!emailRegex.test(email)) {
+//     return res.status(400).json({ message: 'Invalid email format.' });
+//   }
+//   if (!password || password.length < 8) {
+//     return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
+//   }
 
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.trim() },
-    });
+//   try {
+//     const existingUser = await prisma.user.findUnique({
+//       where: { email: email.trim() },
+//     });
 
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email already in use.' });
-    }
+//     if (existingUser) {
+//       return res.status(400).json({ message: 'Email already in use.' });
+//     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name: name.trim(),
-        email: email.trim(),
-        password: hashedPassword,
-      },
-    });
+//     const user = await prisma.user.create({
+//       data: {
+//         name: name.trim(),
+//         email: email.trim(),
+//         password: hashedPassword,
+//       },
+//     });
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(201).json({
-      message: 'User registered successfully!',
-      token,
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ message: 'Internal server error.' });
-  }
-};
+//     res.status(201).json({
+//       message: 'User registered successfully!',
+//       token,
+//     });
+//   } catch (error) {
+//     console.error('Registration error:', error);
+//     res.status(500).json({ message: 'Internal server error.' });
+//   }
+// };
 
 module.exports = {
   getAllUsers,
@@ -158,5 +157,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserByEmail,
-  registerUser,
+  // registerUser,
 };

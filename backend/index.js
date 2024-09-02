@@ -1,17 +1,19 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const http = require('http'); 
+const { WebSocketServer } = require('ws'); 
 const userRoutes = require('./src/routes/userRoutes');
-const BookRoutes = require('./src/routes/bookRaoute')
-const ProfileRoutes = require ('./src/routes/ProfileRoute')
-const MsgRoute = require ('./src/routes/MsgRoute')
-
+const BookRoutes = require('./src/routes/bookRaoute');
+const ProfileRoutes = require('./src/routes/ProfileRoute');
+const MsgRoute = require('./src/routes/MsgRoute');
+const { setWss } = require('./src/controllers/Msg'); 
 
 dotenv.config();
 
 const app = express();
-app.use(express.json()); 
+app.use(express.json());
 
-// CORS middleware
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -21,14 +23,31 @@ app.use((req, res, next) => {
 
 // Use routes
 app.use('/users', userRoutes);
-app.use('/books', BookRoutes)
-app.use('/profiles', ProfileRoutes)
-app.use('/Msg', MsgRoute) 
+app.use('/books', BookRoutes);
+app.use('/profiles', ProfileRoutes);
+app.use('/Msg', MsgRoute);
+
 // Test API
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'API is working' });
 });
 
+
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+
+setWss(wss);
+
+// Handle WebSocket connections
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

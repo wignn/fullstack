@@ -1,6 +1,6 @@
 const prisma = require("../config/db");
 
-const ITEMS_PER_PAGE = 5; // Define this constant to be used in pagination
+const ITEMS_PER_PAGE = 5; 
 
 // Create a new book
 const createBook = async (req, res) => {
@@ -53,7 +53,7 @@ const getBookByName = async (req, res) => {
   const { title } = req.params;
   try {
     const book = await prisma.book.findFirst({
-      where: { title: { contains: title } }, // Use contains to allow partial match
+      where: { title: { contains: title } },
     });
 
     if (book) {
