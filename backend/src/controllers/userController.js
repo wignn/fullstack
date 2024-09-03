@@ -1,5 +1,5 @@
 const prisma = require('../config/db');
-const jwt = require('jsonwebtoken');
+
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -27,7 +27,6 @@ const GetusersName = async (req, res) => {
   try {
     const user = await prisma.user.findFirst({
       where: { name: req.params.name },
-      include: { profile: true } 
     });
 
     if (!user) {
