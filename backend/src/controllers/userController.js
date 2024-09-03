@@ -27,6 +27,7 @@ const GetusersName = async (req, res) => {
   try {
     const user = await prisma.user.findFirst({
       where: { name: req.params.name },
+      include:{profile: true}
     });
 
     if (!user) {

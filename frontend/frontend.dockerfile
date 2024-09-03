@@ -1,38 +1,63 @@
-# syntax=docker/dockerfile:1
+# Use the official Node.js 20 image as the base for the build stage
 
-ARG NODE_VERSION=22.6.0
+FROM node:20-alpine as builder
 
-FROM node:${NODE_VERSION}-alpine
-
-# Use production node environment by default.
-ENV NODE_ENV production
+# Set the working directory
 
 WORKDIR /app
 
+# Copy package.json and package-lock.json
+
+COPY package*.json ./
+
+# Increase the timeout for npm
+
+RUN npm config set fetch-retry-maxtimeout 60000
+
+# Use a different npm registry (optional)
+
+RUN npm config set registry https://registry.npmjs.org/
+
+# Update npm to the latest version
+
+RUN npm install -g npm@latest
+
 # Install dependencies
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
 
-# Run the application as a non-root user.
-USER node
+RUN npm install
 
-# Copy the rest of the source files into the image.
+# Correctly copy the entire project
+
 COPY . .
 
-# Ensure /app directory and .next have the correct permissions
-USER root
-RUN mkdir -p .next && chown -R node:node /app
+# Build the Next.js app
 
-# Switch to the non-root user
-USER node
-
-# Build application
 RUN npm run build
 
-# Expose the port that the application listens on.
+# After the npm run build step
+
+RUN ls -la /app/.next
+
+# Use the official Node.js 20 image as the base for the production stage
+
+FROM node:20-alpine
+
+# Set the working directory
+
+WORKDIR /app
+
+# Copy the entire app from the builder stage
+
+COPY --from=builder /app .
+
+# Install production dependencies
+
+RUN npm install --production
+
+# Expose the port the app will run on
+
 EXPOSE 3000
 
-# Run the application.
+# Start the app
+
 CMD ["npm", "start"]

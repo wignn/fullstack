@@ -9,7 +9,7 @@ interface Message {
   sender: string;
   content: string;
   sentAt: string;
-  Avater?: string; 
+  Avater?: string;
 }
 
 const CommunityMessages = () => {
@@ -30,7 +30,6 @@ const CommunityMessages = () => {
         console.error("Error fetching initial messages:", error);
       }
     };
-
     fetchInitialMessages();
 
     const socket = new WebSocket(`${Api.replace(/^http/, "ws")}/ws`);
@@ -56,12 +55,11 @@ const CommunityMessages = () => {
       try {
         const response = await axios.get(`${Api}/users/name/${userName}`);
         const userData = response.data;
-        const profilePic = userData.profile?.image;
-        
+        const profilePic = userData?.profile?.image || null;
         setProfilePicture(profilePic);
-        console.log('Profile Picture:', profilePic);
+        console.log("Profile Picture:", profilePic);
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.error("Error fetching user profile:", error);
       }
     };
 
@@ -78,12 +76,13 @@ const CommunityMessages = () => {
       setError("Message cannot be empty");
       return;
     }
+    console.log(profilePicture);
 
     try {
       await axios.post(`${Api}/Msg`, {
         sender: session?.user?.name || "Anonymous",
         content,
-        img: profilePicture, 
+        img: profilePicture,
       });
       setContent("");
     } catch (error) {
@@ -97,7 +96,9 @@ const CommunityMessages = () => {
 
   const getAvatar = (avatarUrl?: string, sender: string) => {
     if (avatarUrl) {
-      return <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full" />;
+      return (
+        <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full" />
+      );
     }
     return (
       <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-white font-semibold">
@@ -126,9 +127,7 @@ const CommunityMessages = () => {
           >
             {getAvatar(message.Avater, message.sender)}
             <div className="flex-1">
-              <div className="text-sm font-semibold mb-1">
-                {message.sender}
-              </div>
+              <div className="text-sm font-semibold mb-1">{message.sender}</div>
               <p className="text-base">{message.content}</p>
               <div className="text-right text-xs text-gray-400 mt-2">
                 {new Date(message.sentAt).toLocaleTimeString([], {
