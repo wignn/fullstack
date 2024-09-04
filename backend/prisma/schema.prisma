@@ -27,6 +27,7 @@ model User {
   tokenExpiresAt DateTime?
   bookMarks      BookMark[]
   articles       Article[]
+  mesage         Message[]
   isOnline       Boolean    @default(false)
 }
 
@@ -117,6 +118,8 @@ enum Role {
 
 model Message {
   id      Int      @id @default(autoincrement())
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id])
   sender  String
   content String
   sentAt  DateTime @default(now())
