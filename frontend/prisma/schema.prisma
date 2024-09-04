@@ -5,22 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 datasource db {
   provider = "postgresql"
-  url      = env("DATA_URL") 
+  url      = env("DATABASE_URL") // Ganti DATA_URL menjadi DATABASE_URL
 }
 
 generator client {
   provider = "prisma-client-js"
 }
-
-
-model Message {
-  id      Int      @id @default(autoincrement())
-  sender  String
-  content String
-  sentAt  DateTime @default(now())
-  Avater  String?
-}
-
 
 model User {
   profilePicture String?
@@ -37,6 +27,7 @@ model User {
   tokenExpiresAt DateTime?
   bookMarks      BookMark[]
   articles       Article[]
+  mesage         Message[]
   isOnline       Boolean    @default(false)
 }
 
@@ -95,14 +86,14 @@ model Book {
   coverImage  String?
   chapters    Chapter[]
   bookMarks   BookMark[]
-  synopsis    String?    
+  synopsis    String?
   status      Status     @default(Ongoing)
 }
 
 model Genre {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique
-  books  Book[]  @relation("BookGenres")
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[] @relation("BookGenres")
 }
 
 model Chapter {
@@ -123,4 +114,14 @@ enum Status {
 enum Role {
   USER
   ADMIN
+}
+
+model Message {
+  id      Int      @id @default(autoincrement())
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id])
+  sender  String
+  content String
+  sentAt  DateTime @default(now())
+  Avater  String?
 }

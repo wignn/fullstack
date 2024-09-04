@@ -20,16 +20,21 @@ const CommunityMessages = () => {
   const Api = process.env.NEXT_PUBLIC_API || "http://localhost:4000";
   const { data: session } = useSession();
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  let [Loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchInitialMessages = async () => {
       try {
+        
+      setLoading(true)
         const response = await axios.get(`${Api}/Msg`);
         setMessages(response.data);
       } catch (error) {
         console.error("Error fetching initial messages:", error);
-      }
-    };
+      }finally{
+
+    }
+    }
     fetchInitialMessages();
 
     const socket = new WebSocket(`${Api.replace(/^http/, "ws")}/ws`);
@@ -60,8 +65,10 @@ const CommunityMessages = () => {
         console.log("Profile Picture:", profilePic);
       } catch (error) {
         console.error("Error fetching user profile:", error);
+      }finally{
+        setLoading(false)
       }
-    };
+    }
 
     if (session?.user?.name) {
       fetchUserProfile(session.user.name);
@@ -83,6 +90,7 @@ const CommunityMessages = () => {
         sender: session?.user?.name || "Anonymous",
         content,
         img: profilePicture,
+        UserId: session?.id
       });
       setContent("");
     } catch (error) {
@@ -91,8 +99,13 @@ const CommunityMessages = () => {
       } else {
         setError("An unknown error occurred");
       }
+    }finally{
+
     }
   };
+  if (Loading){
+    return (<div className="">Loading...</div>)
+  }
 
   const getAvatar = (avatarUrl?: string, sender: string) => {
     if (avatarUrl) {
