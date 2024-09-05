@@ -104,7 +104,7 @@ const CommunityMessages = () => {
     }
   };
   if (Loading){
-    return (<div className="">Loading...</div>)
+    return (<div className="bg-black text-white justify-center items-center flex">Loading...</div>)
   }
 
   const getAvatar = (avatarUrl?: string, sender: string) => {
