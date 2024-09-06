@@ -37,14 +37,12 @@ export default function LoginForm() {
       if (res?.error) {
         setError("Login failed: " + res.error);
       } else if (res?.ok) {
-  
-        const result = formValues.email
+        const result = formValues.email;
         await SetatusUser(result);
-      
+
         setStatus("Login successful!");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 5000);
+
+        window.location.href = "/";
       }
     } catch (err) {
       console.log(err);
