@@ -15,7 +15,7 @@ const Dash = async ({ searchParams }: { searchParams?: SearchParams }) => {
   return (
     <div>
       <Navbar/>
-      <Search/>
+     
       <Dashboard query={query} /></div>
   );
 };

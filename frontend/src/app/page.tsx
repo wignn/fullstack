@@ -1,35 +1,47 @@
-import HomePage from "../../../api buangan/HomeComponent.Main";
-import g1 from "../../public/asset/Omniscient-FirstPersons-Viewpoint.jpg";
-import BookDetails from "./components/bookdata";
+
+import g1 from "../../public/about.jpg";
 import BooksLatest from "./components/BookLatest";
 import EmailToAdmin from "./components/emailToAdmin";
 import FeatureList from "./components/Extend";
+import Link from "next/link";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
-      {/* Hero Section */}
-      <section className="h-screen flex flex-col items-center justify-center text-center bg-hero-pattern bg-cover">
-        <h1 className="text-5xl font-bold mb-4">
-          Selamat Datang di Dunia Novelku
+    <div className="text-white min-h-screen">
+      <section
+        className="md:h-screen h-1/2 flex flex-col items-center justify-center text-center bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${g1.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <h1 className="md:text-5xl text-base font-bold mb-4 drop-shadow-lg">
+          Selamat Datang di tera
         </h1>
-        <p className="text-xl mb-6">
-          Jelajahi petualangan yang menegangkan di setiap babnya
+        <p className="md:text-xl text-xs mb-6 drop-shadow-lg">
+          di cari orang yang bisa bantu
         </p>
-        <a
-          href="#features"
-          className="bg-blue-600 px-6 py-3 rounded-full text-lg hover:bg-blue-700 transition"
-        >
-          Baca Sekarang
-        </a>
+        <Link
+  href="#features"
+  className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full md:text-lg text-xs mb-2 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 transition"
+>
+  Baca Sekarang
+</Link>
+
       </section>
 
       {/* 6 Features Section */}
-      <section id="features" className="py-16 px-8">
-        <h2 className="text-4xl font-bold text-center mb-12">
+      <section
+        id="features"
+        className="md:py-16 gap-2 py-8 md:px-8 px-4 bg-gray-900"
+      >
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
           Fitur-Fitur Unggulan
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        {/* Ensure 3 columns across all screen sizes */}
+        <div className="grid grid-cols-3 gap-4">
           <Feature
             title="Genre Populer"
             description="Fantasi, Sci-Fi, Drama, dan banyak lagi genre yang siap menemani hari-harimu."
@@ -62,23 +74,24 @@ export default function Home() {
           />
         </div>
       </section>
+
       <FeatureList />
-      <BooksLatest/>
+      <BooksLatest />
       <EmailToAdmin />
-      
+      <Footer/>
     </div>
   );
 }
 
-// Komponen Feature untuk menampilkan fitur dengan gambar
 function Feature({ title, description, icon }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="w-64 h-80 mb-4 relative overflow-hidden rounded-lg">
+      <div className="md:w-56 w-28 md:h-80 h-40 md:mb-4 mb-2 relative overflow-hidden rounded-lg">
         <img src={icon} alt={title} className="object-cover w-full h-full" />
       </div>
-      <h3 className="text-2xl font-semibold mb-2">{title}</h3>
-      <p className="text-lg">{description}</p>
+      <h3 className="md:text-2xl text-xs font-semibold mb-2">{title}</h3>
+      {/* Hide description on small screens */}
+      <p className="md:text-lg text-xs hidden md:block">{description}</p>
     </div>
   );
 }

@@ -1,35 +1,93 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import { ReadButton } from '../[Book]/Bookbtn';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import { ReadButton } from "../[Book]/Bookbtn";
 
 interface Book {
   id: number;
   title: string;
   author: string;
-  coverImage: string; 
+  coverImage: string;
+  updatedAt: string;
 }
+const timeAgo = (date: string) => {
+  const now = new Date();
+  const updatedDate = new Date(date);
+  const differenceInSeconds = Math.floor(
+    (now.getTime() - updatedDate.getTime()) / 1000
+  );
+
+  const intervals: { [key: string]: number } = {
+    year: 31536000,
+    month: 2592000,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+    second: 1,
+  };
+
+  for (const [unit, seconds] of Object.entries(intervals)) {
+    const interval = Math.floor(differenceInSeconds / seconds);
+    if (interval > 1) return `${interval} ${unit}s ago`;
+    if (interval === 1) return `1 ${unit} ago`;
+  }
+  return "just now";
+};
 
 const BooksLatest = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const api = process.env.NEXT_PUBLIC_API || 'http://localhost:4000';
+  const [chapters, setChapters] = useState<{ [key: number]: string | null }>(
+    {}
+  );
+  const api = process.env.NEXT_PUBLIC_API || "http://localhost:4000";
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get(`${api}/book`);
-        setBooks(response.data);
+        const sortedBooks = response.data.sort(
+          (a: Book, b: Book) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+        setBooks(sortedBooks);
+
+        const chapterPromises = sortedBooks.map(async (book: Book) => {
+          try {
+            const chapterResponse = await axios.get(
+              `${api}/book/${book.id}/chapters`
+            );
+            const chaptersData = chapterResponse.data;
+            if (chaptersData.length > 0) {
+              return { id: book.id, chapterTitle: chaptersData[0].title };
+            }
+            return { id: book.id, chapterTitle: null };
+          } catch (err) {
+            console.error(`Error fetching chapters for book ${book.id}`, err);
+            return { id: book.id, chapterTitle: null };
+          }
+        });
+
+        const chaptersResults = await Promise.all(chapterPromises);
+        const chaptersMap = chaptersResults.reduce(
+          (acc, { id, chapterTitle }) => {
+            acc[id] = chapterTitle;
+            return acc;
+          },
+          {} as { [key: number]: string | null }
+        );
+        setChapters(chaptersMap);
       } catch (err) {
-        setError('Error fetching books');
+        setError("Error fetching books");
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchBooks();
   }, [api]);
 
@@ -51,18 +109,40 @@ const BooksLatest = () => {
 
   return (
     <div className="bg-gray-900 text-gray-200 min-h-screen p-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Books</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
+        Latest
+      </h1>
+      <div className="grid md:grid-cols-4 grid-cols-3 gap-7">
         {books.map((book) => (
-          <div key={book.id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
-            <img
-              src={book.coverImage}
-              alt={book.title}
-              className="w-full h-64 object-cover rounded-md mb-4"
-            />
-            <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
-            <p className="text-gray-400 mb-4">by {book.author}</p>
-            <ReadButton id={book.id}/>
+          <div
+            key={book.id}
+            className="flex flex-col items-center text-center p-4 rounded-lg"
+          >
+            <div className="md:w-56 w-28 md:h-80 h-40 mb-2 relative overflow-hidden rounded-lg">
+              <img
+                src={book.coverImage}
+                alt={book.title}
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <div className="flex-1">
+              <h2 className="md:text-2xl text-xs font-semibold mb-2">
+                {book.title}
+              </h2>
+              <p className="text-gray-400 md:text-lg text-xs mb-2">
+                by {book.author}
+              </p>
+              <p className="text-gray-500 md:text-base text-xs hidden md:block mb-4">
+                {timeAgo(book.updatedAt)}
+              </p>
+              <Link href={`/${book.title}/${chapters[book.id]}`} className="text-gray-400 md:text-base text-xs mt-2">
+  {chapters[book.id] ? chapters[book.id] : "No chapters available"}
+</Link>
+
+            </div>
+            <div className="mt-auto">
+              <ReadButton id={book.id} />
+            </div>
           </div>
         ))}
       </div>
