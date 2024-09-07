@@ -21,7 +21,7 @@ const BooksLatest = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get(`${api}/book`); // Fixed URL
+        const response = await axios.get(`${api}/book`);
         setBooks(response.data);
       } catch (err) {
         setError('Error fetching books');
@@ -31,7 +31,7 @@ const BooksLatest = () => {
       }
     };
     fetchBooks();
-  }, [api]); // Added api as a dependency to ensure useEffect is updated correctly
+  }, [api]);
 
   if (loading) {
     return (

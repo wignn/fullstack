@@ -45,6 +45,22 @@ const getUserbyid = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const getUserBook = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const userBooks = await prisma.bookMark.findMany({
+      where: { bookId: id },
+    });
+
+    // Mengembalikan hasil sebagai response
+    res.status(200).json(userBooks);
+  } catch (error) {
+    // Menangani error dengan mengirimkan status 500
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -190,5 +206,6 @@ module.exports = {
   registerUser,
   updateStatus,
   getAllusers,
-  getUserbyid
+  getUserbyid,
+  getUserBook
 };
