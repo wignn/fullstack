@@ -16,7 +16,7 @@ export const data = async (userId: any) => {
 };
 
 export const profileUser = async (userId: any) => {
-  console.log(`Received userId:aaaa ${userId}`);
+  // console.log(`Received userId:aaaa ${userId}`);
 
   try {
     const dataProfile = await prisma.profile.findUnique({

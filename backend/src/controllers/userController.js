@@ -121,6 +121,11 @@ const registerUser = async (req, res) => {
         email,
         password: hash,
         isOnline: true,
+        profile:{
+          create:{
+            image:'/uploads/04-09-2024/cropped-image-1725410901243-748257845.png'
+          }
+        }
       },
     });
 

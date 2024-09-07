@@ -3,7 +3,7 @@ const prisma = require("../config/db");
 const Getprofile = async (req, res) => {
   try {
     const profile = await prisma.profile.findUnique({
-      where: { id: Number(req.params.id) },
+      where: { userId: Number(req.params.id) },
     });
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });

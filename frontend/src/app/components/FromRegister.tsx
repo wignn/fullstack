@@ -34,7 +34,6 @@ export default function RegisterForm() {
     }
 
     try {
-      // Menggunakan axios untuk mengirim request ke backend di localhost:4000
       const res = await axios.post('http://localhost:4000/users/register', {
         name: formValues.name,
         email: formValues.email,
