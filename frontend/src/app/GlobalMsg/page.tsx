@@ -6,7 +6,6 @@ const CommunityPage = () => {
   return (
     <div>
       <Navbar />
-
       <CommunityMessages />
     </div>
   );

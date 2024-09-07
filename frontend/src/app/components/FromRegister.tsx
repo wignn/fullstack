@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
 export default function RegisterForm() {
   const [formValues, setFormValues] = useState({ name: '', email: '', password: '', confirm: '' });
@@ -33,18 +34,12 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formValues),
+      // Menggunakan axios untuk mengirim request ke backend di localhost:4000
+      const res = await axios.post('http://localhost:4000/users/register', {
+        name: formValues.name,
+        email: formValues.email,
+        password: formValues.password,
       });
-
-      if (!res.ok) {
-        setIsSubmitting(false); 
-        return alert('Registration failed');
-      }
 
       setFormValues({ name: '', email: '', password: '', confirm: '' });
       setSuccessMessage('Registration successful! Redirecting to login page...');
@@ -52,7 +47,9 @@ export default function RegisterForm() {
         window.location.href = '/Login';
       }, 2000);
     } catch (error) {
-      console.log(error);
+      console.error('Registration failed:', error);
+      alert('Registration failed');
+    } finally {
       setIsSubmitting(false); 
     }
   }

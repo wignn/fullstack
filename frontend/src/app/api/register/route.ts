@@ -27,6 +27,7 @@ export async function POST(req: Request) {
         name,
         email,
         password: hash,
+        isOnline: true,
       },
     });
 
