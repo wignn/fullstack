@@ -38,7 +38,6 @@ export default function LoginForm() {
         setError("Login failed: " + res.error);
       } else if (res?.ok) {
         const result = formValues.email;
-        await SetatusUser(result);
 
         setStatus("Login successful!");
 

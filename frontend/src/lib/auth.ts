@@ -1,10 +1,7 @@
-
-
 import { prisma } from "./prisma";
 import bcrypt from "bcrypt";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { use } from "react";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -32,35 +29,43 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) return null;
 
-        const decode = await bcrypt.compare(
+        const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
-        if (!decode) return null;
+        if (!isPasswordValid) return null;
 
         return {
-          name: user.name,
           id: user.id,
-          createAt: user.createdAt,
+          email: user.email,
+          name: user.name,
+          createdAt: user.createdAt, 
         };
       },
     }),
   ],
   callbacks: {
-    jwt({ token, user, profile }) {
-      if (!user) return token;
-
-      return {
-        ...token,
-        id: user.id,
-        createAt: user.createdAt,
-        email: user.email,
-      };
+    jwt({ token, user }) {
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          createdAt: user.createdAt,
+        };
+      }
+      return token;
     },
     session({ session, token }) {
       return {
         ...session,
-        id: token.id,
+        user: {
+          ...session.user,
+          id: token.id,
+          name: token.name,
+          createdAt: token.createdAt,
+        },
       };
     },
   },

@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 // Use routes
 app.use('/users', userRoutes);
-app.use('/books', BookRoutes);
+app.use('/book', BookRoutes);
 app.use('/profiles', ProfileRoutes);
 app.use('/Msg', MsgRoute);
 
@@ -38,6 +38,7 @@ const wss = new WebSocketServer({ server });
 
 
 setWss(wss);
+
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {

@@ -1,4 +1,4 @@
-'use client'
+
 import Image from "next/image";
 import {formatDate} from "@/lib/utils";
 import {ReadButton} from "@/app/[Book]/Bookbtn";

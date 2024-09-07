@@ -11,7 +11,7 @@ export const Bookmark = ({ id }: { id: string }) => {
   const [loading, setLoading] = useState(false);
   const [hasBookmark, setHasBookmark] = useState(false);
 
-  const userId = session?.id; 
+  const userId = session?.user?.id
 
   useEffect(() => {
     const fetchBookmarkStatus = async () => {

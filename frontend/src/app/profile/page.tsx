@@ -6,7 +6,7 @@ import Profile from "../components/ProfileSettingsClient";
 
 export default async function ProfileSettings() {
   const session = await getSessionData();
-  const id = session?.id;
+  const id = session?.user?.id;
   return (
     <div className="bg-slate-700">
       <Navbar />

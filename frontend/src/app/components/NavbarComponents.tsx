@@ -17,7 +17,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = session?.id; 
+        const userId = session?.user?.id; 
         if (userId) {
           const response = await axios.get(`${Api}/profiles/${userId}`);
           setUserImage(response.data.image || img);

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Bookdata, chapter } from "@/app/book/[id]/BookHandler";
+import Axios from "axios";
 import { btnDataBookMark } from "@/app/bookmark/dataMark";
 import { sessionData } from "@/lib/session";
 import { Bookmark } from "../bookmark/bookMarkbtn";
@@ -13,31 +13,32 @@ import Navbar from "./NavbarComponents";
 import Loading from "./Loading";
 import { useSession } from "next-auth/react";
 
-const BookDetails = (books) => {
+const BookDetails = () => {
   const pathname = usePathname();
   const bookId = pathname.split("/").pop();
-  const [book, setBook] = useState<any[]>([]);
+  const [book, setBook] = useState<any>(null);
   const [chapters, setChapters] = useState([]);
   const [hasBookmark, setHasBookmark] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [genresLoading, setGenresLoading] = useState(true);
-  const [session, setSession] = useState();
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedBook = await Bookdata(bookId);
-        const fetchedChapters = await chapter(bookId);
-        setBook(fetchedBook);
-        setChapters(fetchedChapters);
+        const [bookResponse, chaptersResponse] = await Promise.all([
+          Axios.get(`http://localhost:4000/book/${bookId}`),
+          Axios.get(`http://localhost:4000/book/${bookId}/chapters`),
+        ]);
+
+        setBook(bookResponse.data);
+        setChapters(chaptersResponse.data);
+
         const sessionPage = await useSession();
         setSession(sessionPage);
         const session = await sessionData();
-        const userId = session?.id;
+        const userId = session?.data?.user?.id;
         const bookmarkStatus = await btnDataBookMark(userId, bookId);
         setHasBookmark(bookmarkStatus);
-
-        setGenresLoading(false);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -56,10 +57,7 @@ const BookDetails = (books) => {
     );
 
   const generateChapterUrl = (chapterTitle) => {
-    return `/${book.title.replace(/ /g, "-")}/${chapterTitle.replace(
-      / /g,
-      "-"
-    )}`;
+    return `/${book.title.replace(/ /g, "-")}/${chapterTitle.replace(/ /g, "-")}`;
   };
 
   return (
@@ -90,7 +88,7 @@ const BookDetails = (books) => {
           </div>
         </div>
         <div className="flex justify-center p-4">
-          <div className="relative md:w-[350px] w-[175px]  md:h-[500px] h-fulloverflow-hidden rounded-lg shadow-xl flex justify-center">
+          <div className="relative md:w-[350px] w-[175px] md:h-[500px] h-full overflow-hidden rounded-lg shadow-xl flex justify-center">
             <Image
               src={book.coverImage}
               alt={book.title}

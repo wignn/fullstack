@@ -96,6 +96,24 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
+//update Status 
+const updateStatus = async (req, res) => {
+  try {
+    const { email,  } = req.body; 
+    const user = await prisma.user.update({
+      where: { email: email }, 
+      data: {  isOnline: true,  },
+    });
+
+    return res.status(200).json({ message: "User status updated", user });
+  } catch (err) {
+    console.error("Error updating user status:", err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+
+
 // Register user
 const registerUser = async (req, res) => {
   try {
@@ -111,10 +129,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ status: "error", message: "Invalid email format" });
     }
 
-    // Hash password
     const hash = await bcrypt.hash(password, 12);
-
-    // Simpan pengguna di database
     const user = await prisma.user.create({
       data: {
         name,
@@ -143,4 +158,5 @@ module.exports = {
   getUserByEmail,
   GetusersName,
   registerUser,
+  updateStatus
 };

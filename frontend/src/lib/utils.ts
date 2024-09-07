@@ -1,13 +1,17 @@
-export const formatDate = (dateStr: string) => {
+export const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return "Tanggal tidak valid";
+  }
+
   const formatter = new Intl.DateTimeFormat("id-ID", {
     dateStyle: "medium",
     timeStyle: "short",
   });
+
   return formatter.format(date);
 };
 
- 
   
   export const generatePagination = (currentPage: number, totalPages: number) => {
     if (totalPages <= 7) {

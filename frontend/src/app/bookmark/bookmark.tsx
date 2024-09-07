@@ -17,7 +17,7 @@ const BookMark = () => {
 
     const fetchBookmarks = async () => {
         try {
-            const data = await DataBookMark(session?.id);
+            const data = await DataBookMark(session?.user?.id);
             setBookmarks(data);
         } catch (error) {
             console.error("Error fetching bookmarks:", error);
