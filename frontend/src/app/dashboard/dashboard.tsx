@@ -31,7 +31,7 @@ export default async function Dashboard({query}: DashboardProps) {
         <div className="min-h-screen bg-gray-900 text-gray-200 p-4 sm:p-8">
             <header className="flex justify-between items-center bg-gray-800 p-4 sm:p-6 rounded-md shadow-lg">
                 <h1 className="text-xl sm:text-2xl font-bold text-white mr-3">Dashboard</h1>
-                <Search/>
+              
             </header>
 
             {/* Statistics */}

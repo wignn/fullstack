@@ -12,6 +12,8 @@ router.get('/name/:name', userController.GetusersName);
 router.post('/register', userController.registerUser);
 router.post('/updateStatus', userController.updateStatus);
 router.get('/', userController.getAllusers);
+router.get('/:id', userController.getUserbyid)
+
 
 
 

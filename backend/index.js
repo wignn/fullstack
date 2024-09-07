@@ -6,7 +6,7 @@ const userRoutes = require('./src/routes/userRoutes');
 const BookRoutes = require('./src/routes/bookRaoute');
 const ProfileRoutes = require('./src/routes/ProfileRoute');
 const MsgRoute = require('./src/routes/MsgRoute');
-const { setWss } = require('./src/controllers/Msg'); 
+const { setWss } = require('./src/middleware/websocket'); 
 
 dotenv.config();
 
@@ -39,13 +39,15 @@ const wss = new WebSocketServer({ server });
 
 setWss(wss);
 
-
-// Handle WebSocket connections
 wss.on('connection', (ws) => {
-  console.log('New client connected');
+  console.log('New WebSocket connection');
+  
+  ws.on('message', (message) => {
+    console.log('Received message:', message);
+  });
 
   ws.on('close', () => {
-    console.log('Client disconnected');
+    console.log('WebSocket connection closed');
   });
 });
 

@@ -1,6 +1,7 @@
 import Dashboard from "./dashboard";
 
 import Navbar from "../components/NavbarComponents";
+import Search from "../components/searchBook";
 
 
 interface SearchParams {
@@ -14,6 +15,7 @@ const Dash = async ({ searchParams }: { searchParams?: SearchParams }) => {
   return (
     <div>
       <Navbar/>
+      <Search/>
       <Dashboard query={query} /></div>
   );
 };

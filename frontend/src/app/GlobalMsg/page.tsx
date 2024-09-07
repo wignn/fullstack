@@ -5,7 +5,7 @@ import Navbar from "../components/NavbarComponents";
 const CommunityPage = () => {
   return (
     <div>
-      <Navbar />
+
       <CommunityMessages />
     </div>
   );

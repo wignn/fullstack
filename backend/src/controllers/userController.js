@@ -1,6 +1,5 @@
 const prisma = require('../config/db');
 const bcrypt = require ('bcrypt');
-
 const GetusersName = async (req, res) => {
   try {
     const user = await prisma.user.findFirst({
@@ -13,6 +12,7 @@ const GetusersName = async (req, res) => {
     }
 
     res.status(200).json(user);
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -23,7 +23,22 @@ const getAllusers = async (req, res) => {
     const users = await prisma.user.findMany({
       include: {
         profile: true, 
+        bookMarks: true
       },
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getUserbyid = async (req, res) => {
+  try {
+    const users = await prisma.user.findUnique({
+      where:{id: Number(req.params.id)},
+      include:{
+        profile: true,
+        bookMarks:true
+      }
     });
     res.status(200).json(users);
   } catch (error) {
@@ -174,5 +189,6 @@ module.exports = {
   GetusersName,
   registerUser,
   updateStatus,
-  getAllusers
+  getAllusers,
+  getUserbyid
 };

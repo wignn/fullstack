@@ -1,7 +1,7 @@
+
 const prisma = require("../config/db");
 const { z } = require("zod");
-
-let wss;
+const { broadcast } = require('../middleware/websocket');
 
 const GetAllMsg = async (req, res) => {
   try {
@@ -31,16 +31,9 @@ const CreateMsg = async (req, res) => {
 
     res.status(201).json(newMessage);
 
-    if (wss) {
-      wss.clients.forEach((client) => {
-        if (client.readyState === client.OPEN) {
-          client.send(JSON.stringify(newMessage));
-        }
-      });
-    }
+    broadcast(newMessage);
 
     const MAX_MESSAGES = 100;
-
     const totalMessages = await prisma.message.count();
 
     if (totalMessages > MAX_MESSAGES) {
@@ -77,12 +70,7 @@ const CreateMsg = async (req, res) => {
   }
 };
 
-const setWss = (webSocketServer) => {
-  wss = webSocketServer;
-};
-
 module.exports = {
   GetAllMsg,
   CreateMsg,
-  setWss,
 };
