@@ -18,6 +18,21 @@ const GetusersName = async (req, res) => {
   }
 }
 
+const getAllusers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        profile: true, 
+      },
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 // Create user with validation
 const createUser = async (req, res) => {
   const { name, email } = req.body;
@@ -158,5 +173,6 @@ module.exports = {
   getUserByEmail,
   GetusersName,
   registerUser,
-  updateStatus
+  updateStatus,
+  getAllusers
 };

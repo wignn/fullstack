@@ -16,7 +16,6 @@ const UpdateBookPage = async ({ params }: { params: any }) => {
 
   return (
     <div >
-      
       <Suspense fallback={<Spinner />}>
         <BookDetails book={Book} />
       </Suspense>

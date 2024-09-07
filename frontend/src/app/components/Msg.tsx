@@ -90,7 +90,7 @@ const CommunityMessages = () => {
         sender: session?.user?.name || "Anonymous",
         content,
         img: profilePicture,
-        UserId: session?.id
+        UserId: session?.user?.id
       });
       setContent("");
     } catch (error) {

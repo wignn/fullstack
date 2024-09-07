@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { notFound } from "next/navigation";
+import { Global } from "@emotion/react";
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -34,7 +35,10 @@ export async function middleware(req: NextRequest) {
   if (regis && isAuthenticated) {
     return NextResponse.redirect(new URL("/", req.url));
   }
-
+  const message = req.nextUrl.pathname.startsWith("/GlobalMsg");
+  if(message && !isAuthenticated){
+    return NextResponse.redirect(new URL("/Login", req.url));
+  }
   const adminPaths = req.nextUrl.pathname.startsWith("/DataBook");
   if (adminPaths && (!token || token.name !== "Admin")) {
     // return NextResponse.json(

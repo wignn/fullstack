@@ -1,5 +1,4 @@
 'use server'
-import { book } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 
 const addBookmark = async (bookId: string, userId:number) => {

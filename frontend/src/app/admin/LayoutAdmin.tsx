@@ -23,13 +23,7 @@ export default function AdminLayout({ children }) {
                   </p>
                 </Link>
               </li>
-              <li className="mb-4">
-                <Link href="/admin/users">
-                  <p className={`block p-2 rounded ${darkMode ? 'hover:bg-slate-600' : 'hover:bg-gray-300'}`}>
-                    Users
-                  </p>
-                </Link>
-              </li>
+              
               <li className="mb-4">
                 <Link href="/admin/settings">
                   <p className={`block p-2 rounded ${darkMode ? 'hover:bg-slate-600' : 'hover:bg-gray-300'}`}>
@@ -39,6 +33,13 @@ export default function AdminLayout({ children }) {
               </li>
               <li className="mb-4">
                 <Link href="/admin/Create">
+                  <p className={`block p-2 rounded ${darkMode ? 'hover:bg-slate-600' : 'hover:bg-gray-300'}`}>
+                    Create
+                  </p>
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link href="/admin/allUsers">
                   <p className={`block p-2 rounded ${darkMode ? 'hover:bg-slate-600' : 'hover:bg-gray-300'}`}>
                     Create
                   </p>
@@ -55,7 +56,7 @@ export default function AdminLayout({ children }) {
         </aside>
 
         {/* Main Content */}
-        <main className={`flex-1 p-6 ${darkMode ? 'text-white' : 'text-black'}`}>
+        <main className={`flex-1 ${darkMode ? 'text-white' : 'text-black'}`}>
           {children}
         </main>
       </div>

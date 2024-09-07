@@ -4,7 +4,7 @@ import { CreateButton } from "@/app/components/Book/buttons";
 import { GetbookPages } from "@/lib/data";
 import Pagination from "../components/Book/pagination";
 import Navbar from "../components/NavbarComponents";
-import  Footer from '@/app/components/Footer'
+import Footer from '@/app/components/Footer';
 
 const DataBook = async ({
   searchParams,
@@ -17,22 +17,31 @@ const DataBook = async ({
   const totalPages = await GetbookPages(query);
 
   return (
-    <div className="bg-slate-500 min-h-full min-w-full">
-      <Navbar/>
-      <div className="flex items-center justify-center gap-2 m-16 mb-2">
-        <Search />
-        <CreateButton />
-      </div>
-      <div className="- flex flex-col items-center px-4 pb-10">
-        <div className="w-full mx-auto">
-          <BookTable query={query} currentPage={currentPage} />
-          <div className="flex justify-center items-center mt-4 mb-0">
+    <div className="bg-slate-500 min-h-screen flex flex-col justify-between">
+      <Navbar />
+      
+      {/* Main Content */}
+      <div className="flex-1 w-full flex flex-col items-center">
+        <div className="w-full max-w-6xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between gap-4 mb-8">
+            <Search />
+            <CreateButton />
+          </div>
+          
+          {/* Table Section */}
+          <div className="w-full">
+            <BookTable query={query} currentPage={currentPage} />
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center items-center mt-8">
             <Pagination totalPages={totalPages} />
           </div>
         </div>
       </div>
 
-        <Footer/>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

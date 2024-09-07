@@ -1,22 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import { saveBook } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { SubmitButton } from "@/app/components/Book/buttons";
 
 const CreateBookForm = () => {
   const [state, formAction] = useFormState(saveBook, null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   return (
-    <div className=" bg-slate-500 bg-gradient-to-r from-blue-500 to-purple-500 p-8 rounded-lg max-w-md mx-auto mt-8 shadow-xl border border-gray-300">
+    <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-8 rounded-lg max-w-lg mx-auto mt-8 shadow-xl border border-gray-300">
       <form
         action={formAction}
-        className="bg-white p-6 rounded-lg shadow-md bg-opacity-90"
+        className="bg-white p-6 rounded-lg shadow-lg bg-opacity-95"
       >
-        <div className="mb-5">
+        {/* Title Field */}
+        <div className="mb-6">
           <label
             htmlFor="title"
-            className="block text-sm font-medium text-gray-900"
+            className="block text-sm font-semibold text-gray-700"
           >
             Title
           </label>
@@ -24,17 +34,21 @@ const CreateBookForm = () => {
             type="text"
             name="title"
             id="title"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-            placeholder="Book Title..."
+            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            placeholder="Enter book title..."
           />
-          <div id="title-error" aria-live="polite" aria-atomic="true">
-            <p className="mt-2 text-sm text-red-500">{state?.Error?.title}</p>
-          </div>
+          {state?.Error?.title && (
+            <p className="mt-2 text-sm text-red-600" id="title-error">
+              {state.Error.title}
+            </p>
+          )}
         </div>
-        <div className="mb-5">
+
+        {/* Author Field */}
+        <div className="mb-6">
           <label
             htmlFor="author"
-            className="block text-sm font-medium text-gray-900"
+            className="block text-sm font-semibold text-gray-700"
           >
             Author
           </label>
@@ -42,55 +56,78 @@ const CreateBookForm = () => {
             type="text"
             name="author"
             id="author"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-            placeholder="Author Name..."
+            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            placeholder="Enter author name..."
           />
-          <div id="author-error" aria-live="polite" aria-atomic="true">
-            <p className="mt-2 text-sm text-red-500">{state?.Error?.author}</p>
-          </div>
+          {state?.Error?.author && (
+            <p className="mt-2 text-sm text-red-600" id="author-error">
+              {state.Error.author}
+            </p>
+          )}
         </div>
-        <div className="mb-5">
+
+        {/* Synopsis Field */}
+        <div className="mb-6">
           <label
             htmlFor="synopsis"
-            className="block text-sm font-medium text-gray-900"
+            className="block text-sm font-semibold text-gray-700"
           >
-            synopsis
+            Synopsis
           </label>
-          <input
-            type="text"
+          <textarea
             name="synopsis"
             id="synopsis"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-            placeholder="synopsis..."
+            rows={4}
+            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            placeholder="Enter a brief synopsis..."
           />
-          <div id="synopsis-error" aria-live="polite" aria-atomic="true">
-            <p className="mt-2 text-sm text-red-500">{state?.Error?.synopsis}</p>
-          </div>
+          {state?.Error?.synopsis && (
+            <p className="mt-2 text-sm text-red-600" id="synopsis-error">
+              {state.Error.synopsis}
+            </p>
+          )}
         </div>
-        <div className="mb-5">
+
+        {/* Cover Image Field with Preview */}
+        <div className="mb-6">
           <label
             htmlFor="coverImage"
-            className="block text-sm font-medium text-gray-900"
+            className="block text-sm font-semibold text-gray-700"
           >
-            Cover Image URL
+            Cover Image
           </label>
           <input
             type="file"
             name="coverImage"
             id="coverImage"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+            accept="image/*"
+            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            onChange={handleImageChange}
           />
-          <div id="coverImage-error" aria-live="polite" aria-atomic="true">
-            <p className="mt-2 text-sm text-red-500">
-              {state?.Error?.coverImage}
+          {preview && (
+            <div className="mt-4">
+              <img
+                src={preview}
+                alt="Image Preview"
+                className="w-full h-auto max-h-64 object-contain rounded-lg shadow-md"
+              />
+            </div>
+          )}
+          {state?.Error?.coverImage && (
+            <p className="mt-2 text-sm text-red-600" id="coverImage-error">
+              {state.Error.coverImage}
             </p>
-          </div>
+          )}
         </div>
-        <div className="mb-5">
-          <div id="message-error" aria-live="polite" aria-atomic="true">
-            <p className="mt-2 text-sm text-red-500">{state?.message}</p>
+
+        {/* Error Message */}
+        {state?.message && (
+          <div className="mb-6" id="message-error" aria-live="polite">
+            <p className="text-sm text-red-600">{state.message}</p>
           </div>
-        </div>
+        )}
+
+        {/* Submit Button */}
         <SubmitButton label="Save" />
       </form>
     </div>

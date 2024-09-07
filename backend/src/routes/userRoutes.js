@@ -11,6 +11,7 @@ router.get('/email/:email', userController.getUserByEmail);
 router.get('/name/:name', userController.GetusersName);
 router.post('/register', userController.registerUser);
 router.post('/updateStatus', userController.updateStatus);
+router.get('/', userController.getAllusers);
 
 
 
