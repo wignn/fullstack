@@ -12,6 +12,7 @@ interface Book {
   coverImage: string;
   updatedAt: string;
 }
+
 const timeAgo = (date: string) => {
   const now = new Date();
   const updatedDate = new Date(date);
@@ -34,6 +35,10 @@ const timeAgo = (date: string) => {
     if (interval === 1) return `1 ${unit} ago`;
   }
   return "just now";
+};
+
+const truncateTitle = (title: string, maxLength: number) => {
+  return title.length > maxLength ? title.slice(0, maxLength) + "..." : title;
 };
 
 const BooksLatest = () => {
@@ -107,38 +112,41 @@ const BooksLatest = () => {
     );
   }
 
+  // Display only 4 books on mobile devices
+  const booksToDisplay = window.innerWidth < 768 ? books.slice(0, 8) : books;
+
   return (
     <div className="bg-gray-900 text-gray-200 min-h-screen p-8">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
-        Latest
+        Latest Books
       </h1>
-      <div className="grid md:grid-cols-4 grid-cols-3 gap-7">
-        {books.map((book) => (
+      <div className="grid md:grid-cols-5 sm:grid-cols-2 grid-cols-3 gap-7 justify-items-center">
+        {booksToDisplay.map((book) => (
           <div
             key={book.id}
-            className="flex flex-col items-center text-center p-4 rounded-lg"
+            className="flex flex-col items-center md:w-full w-32 gap-2 mx-2 max-w-max md:max-w-xs p-4 md:bg-gray-800 bg-none rounded-lg shadow-md"
           >
-            <div className="md:w-56 w-28 md:h-80 h-40 mb-2 relative overflow-hidden rounded-lg">
+            <div className="md:w-full md:h-full w-28 h-48 mb-4 relative overflow-hidden rounded-lg">
               <img
                 src={book.coverImage}
                 alt={book.title}
                 className="object-cover w-full h-full"
               />
             </div>
-            <div className="flex-1">
-              <h2 className="md:text-2xl text-xs font-semibold mb-2">
-                {book.title}
-              </h2>
-              <p className="text-gray-400 md:text-lg text-xs mb-2">
-                by {book.author}
-              </p>
-              <p className="text-gray-500 md:text-base text-xs hidden md:block mb-4">
+            <div className="flex-1 text-center">
+              <h3 className="md:text-lg text-base font-semibold mb-2">
+                {truncateTitle(book.title, 16)}
+              </h3>
+              <p className="text-gray-400 text-sm mb-2">by {book.author}</p>
+              <p className="text-gray-500 text-xs mb-4">
                 {timeAgo(book.updatedAt)}
               </p>
-              <Link href={`/${book.title}/${chapters[book.id]}`} className="text-gray-400 md:text-base text-xs mt-2">
-  {chapters[book.id] ? chapters[book.id] : "No chapters available"}
-</Link>
-
+              <Link
+                href={`/${book.title}/${chapters[book.id]}`}
+                className="text-blue-400 text-sm"
+              >
+                {chapters[book.id] ? chapters[book.id] : "No chapters available"}
+              </Link>
             </div>
             <div className="mt-auto">
               <ReadButton id={book.id} />
