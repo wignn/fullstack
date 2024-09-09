@@ -62,12 +62,13 @@ const BooksLatest = () => {
 
         const chapterPromises = sortedBooks.map(async (book: Book) => {
           try {
-            const chapterResponse = await axios.get(
-              `${api}/book/${book.id}/chapters`
-            );
+            const chapterResponse = await axios.get(`${api}/book/${book.id}/chapters`);
             const chaptersData = chapterResponse.data;
+            
+            // Mendapatkan chapter terakhir (terbaru)
             if (chaptersData.length > 0) {
-              return { id: book.id, chapterTitle: chaptersData[0].title };
+              const lastChapter = chaptersData[chaptersData.length - 1]; // Mengambil chapter terakhir
+              return { id: book.id, chapterTitle: lastChapter.title };
             }
             return { id: book.id, chapterTitle: null };
           } catch (err) {
@@ -75,6 +76,7 @@ const BooksLatest = () => {
             return { id: book.id, chapterTitle: null };
           }
         });
+        
 
         const chaptersResults = await Promise.all(chapterPromises);
         const chaptersMap = chaptersResults.reduce(
@@ -134,22 +136,23 @@ const BooksLatest = () => {
               />
             </div>
             <div className="flex-1 text-center">
-              <h3 className="md:text-lg text-base font-semibold mb-2">
+              <h4 className="md:text-lg text-sm font-semibold mb-2">
                 {truncateTitle(book.title, 16)}
-              </h3>
-              <p className="text-gray-400 text-sm mb-2">by {book.author}</p>
-              <p className="text-gray-500 text-xs mb-4">
+              </h4>
+              <p className="text-gray-400 md:text-sm text-xs ">by {book.author}</p>
+            </div>
+            <div className="mt-auto">
+             
+              <p className="text-gray-500 text-center text-xs">
                 {timeAgo(book.updatedAt)}
               </p>
               <Link
                 href={`/${book.title}/${chapters[book.id]}`}
-                className="text-blue-400 text-sm"
+                className="text-blue-400 md:text-sm text-xs mb-1 text-center justify-center flex"
               >
-                {chapters[book.id] ? chapters[book.id] : "No chapters available"}
+                {chapters[book.id] ? chapters[book.id] : " none "}
               </Link>
-            </div>
-            <div className="mt-auto">
-              <ReadButton id={book.id} />
+               <ReadButton id={book.id} />
             </div>
           </div>
         ))}

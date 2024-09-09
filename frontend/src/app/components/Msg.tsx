@@ -103,9 +103,17 @@ const CommunityMessages = () => {
 
     }
   };
-  if (Loading){
-    return (<div className="bg-black text-white justify-center items-center flex">Loading...</div>)
+  if (Loading) {
+    return (
+      <div className="bg-black text-white flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-lg font-semibold animate-pulse">Loading...</p>
+        </div>
+      </div>
+    );
   }
+  
 
   const getAvatar = (avatarUrl?: string, sender: string) => {
     if (avatarUrl) {

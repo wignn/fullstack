@@ -24,7 +24,7 @@ export default function ProfileSettingsClient() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
   const onCropComplete = useCallback(
-    (croppedArea: any, croppedAreaPixels: any) => {
+    (_croppedArea: any, croppedAreaPixels: any) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
     []
@@ -32,10 +32,10 @@ export default function ProfileSettingsClient() {
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      if (session?.id) {
+      if (session?.user?.id) {
         try {
           setLoading(true);
-          const profileData = await profileUser(session.id);
+          const profileData = await profileUser(session.user.id);
           setBio(profileData?.bio || "");
           setProfileImage(profileData?.image || null);
         } catch (err) {
@@ -61,7 +61,7 @@ export default function ProfileSettingsClient() {
 
     const formData = new FormData();
     formData.append("bio", bio);
-    formData.append("userId", session.id);
+    formData.append("userId", session.user.id);
 
     if (image && croppedAreaPixels) {
       const croppedImage = await getCroppedImg(preview, croppedAreaPixels);
@@ -91,7 +91,9 @@ export default function ProfileSettingsClient() {
       console.error("Error submitting the form", error);
       setError("An unexpected error occurred.");
       setSuccessMessage(null);
-    } 
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,19 +120,17 @@ export default function ProfileSettingsClient() {
   }
 
   return (
-    <div className="h-full py-16 flex items-center justify-center bg-gray-900 to-slate-700 bg-gradient-to-tr text-white">
+    <div className="h-full py-16 flex items-center justify-center bg-gray-900 bg-gradient-to-tr from-gray-900 to-slate-700 text-white">
       <div className="w-full max-w-md mx-auto bg-gray-800 shadow-lg border-2 border-gray-700 rounded-lg">
         {session && (
-          <>
-            <h3 className="text-center m-4 text-2xl font-bold text-gray-200">
-              {session.user?.name}
-            </h3>
-          </>
+          <h3 className="text-center my-4 text-2xl font-bold text-gray-200">
+            {session.user?.name}
+          </h3>
         )}
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
-          <div className="relative mb-2 flex flex-col items-center">
+          <div className="relative mb-4 flex flex-col items-center">
             {preview ? (
-              <div className="mt-3 relative w-64 h-64">
+              <div className="relative w-64 h-64">
                 <Cropper
                   image={preview}
                   crop={crop}
@@ -143,13 +143,13 @@ export default function ProfileSettingsClient() {
               </div>
             ) : (
               profileImage && (
-                <div className="mt-3 w-36 h-36 rounded-full border-4 border-gray-700 overflow-hidden">
+                <div className="w-36 h-36 rounded-full border-4 border-gray-700 overflow-hidden">
                   <Image
-                  width={150}
-                  height={300}
+                    width={150}
+                    height={300}
                     src={profileImage}
                     alt="Profile Picture"
-                    className="object-cover w-full h-full "
+                    className="object-cover w-full h-full"
                   />
                 </div>
               )
@@ -167,37 +167,37 @@ export default function ProfileSettingsClient() {
               id="image"
               onChange={handleImageChange}
               className="hidden"
-              required
             />
           </label>
-          <div className="text-left mb-2 w-full px-4">
-            <div className="mb-2">
-              <label
-                htmlFor="content"
-                className="block text-sm font-medium text-gray-300"
-              >
-                Bio
-              </label>
-              <textarea
-                name="bio"
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                className="bg-gray-700 border border-gray-600 text-white text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-                placeholder="Write your bio..."
-                required
-              />
-              {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-            </div>
+
+          <div className="text-left mb-4 w-full px-4">
+            <label
+              htmlFor="bio"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Bio
+            </label>
+            <textarea
+              name="bio"
+              id="bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              className="bg-gray-700 border border-gray-600 text-white text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+              placeholder="Write your bio..."
+              required
+            />
+            {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
           </div>
+
           {successMessage && (
             <p className="text-green-500 mb-4">{successMessage}</p>
           )}
           {error && <p className="text-red-500 mb-4">{error}</p>}
+
           <button
             disabled={sending}
             type="submit"
-            className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none mb-3"
+            className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none mb-4"
           >
             {sending ? "Submitting..." : "Update Profile"}
           </button>

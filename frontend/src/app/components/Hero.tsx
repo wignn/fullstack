@@ -8,7 +8,7 @@ export default function Home() {
       <section
         className="md:h-screen h-1/2 flex flex-col items-center justify-center text-center bg-cover bg-center"
         style={{
-          backgroundImage: `url(${g1.src})`,
+          backgroundImage: `url(/about.jpg)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

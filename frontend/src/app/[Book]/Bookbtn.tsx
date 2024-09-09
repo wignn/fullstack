@@ -11,7 +11,7 @@ export const ReadButton = ({ id }: { id: string }) => {
   return (
     <Link
       href={`/book/${id}`}
-      className="text-center justify-center flex hover:to-blue-100"
+      className="text-center md:text-base text-sm justify-center flex hover:to-blue-100"
     >
       <p>Read</p>
     </Link>

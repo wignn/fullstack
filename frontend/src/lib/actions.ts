@@ -10,9 +10,6 @@ import mime from 'mime-types';
 import { join } from 'path';
 import { stat, mkdir, writeFile } from 'fs/promises';
 import { NextResponse } from "next/server";
-import { book } from "./data";
-import { bookMark } from "@/app/book/[id]/BookHandler";
-import { chapter } from "@/app/book/[id]/BookHandler";
 
 
 const BookSchema = z.object({
