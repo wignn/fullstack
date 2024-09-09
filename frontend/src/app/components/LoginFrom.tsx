@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import Navbar from "./NavbarComponents";
-import { SetatusUser } from "../admin/users/userData";
-
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({ email: "", password: "" });

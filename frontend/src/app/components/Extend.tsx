@@ -14,7 +14,7 @@ const FeatureList = () => {
   const { data: session } = useSession();
   
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-900">
+    <div className="container mx-auto px-4 pt-8 bg-gray-900">
       <h2 className="md:text-3xl text-base font-bold text-center mb-6 text-gray-200">
         Our Features
       </h2>

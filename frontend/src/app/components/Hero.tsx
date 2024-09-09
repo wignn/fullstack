@@ -31,7 +31,7 @@ export default function Home() {
       {/* 6 Features Section */}
       <section
         id="features"
-        className="md:py-16 gap-2 py-16 md:px-8 px-4 bg-gray-900"
+        className="md:py-16 gap-2 py-20 md:px-8 px-4 bg-gray-900"
       >
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
           Fitur-Fitur Unggulan

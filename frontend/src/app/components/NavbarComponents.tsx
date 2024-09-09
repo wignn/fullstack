@@ -12,7 +12,7 @@ const Navbar = () => {
   const [nav, setNav] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [userImage, setUserImage] = useState("");
-  const Api = process.env.PUBLIC_API || 'http://localhost:4000'
+  const Api = process.env.NEXT_PUBLIC_API || 'http://localhost:4000'
   
   useEffect(() => {
     const fetchUser = async () => {

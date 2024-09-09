@@ -21,13 +21,14 @@ const BookDetails = () => {
   const [hasBookmark, setHasBookmark] = useState(false);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
+  const API =process.env.NEXT_PUBLIC_API || 'http://localhost:4000'; 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [bookResponse, chaptersResponse] = await Promise.all([
-          Axios.get(`http://localhost:4000/book/${bookId}`),
-          Axios.get(`http://localhost:4000/book/${bookId}/chapters`),
+          Axios.get(`${API}/book/${bookId}`),
+          Axios.get(`${API}/book/${bookId}/chapters`),
         ]);
 
         setBook(bookResponse.data);
