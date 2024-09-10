@@ -6,6 +6,7 @@ const userRoutes = require('./src/routes/userRoutes');
 const BookRoutes = require('./src/routes/bookRaoute');
 const ProfileRoutes = require('./src/routes/ProfileRoute');
 const MsgRoute = require('./src/routes/MsgRoute');
+const Mail = require ('./src/routes/Mail')
 const { setWss } = require('./src/middleware/websocket'); 
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use('/users', userRoutes);
 app.use('/book', BookRoutes);
 app.use('/profiles', ProfileRoutes);
 app.use('/Msg', MsgRoute);
+app.use('/userMail', Mail);
 
 // Test API
 app.get('/test', (req, res) => {

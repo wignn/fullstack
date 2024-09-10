@@ -21,7 +21,7 @@ const BookDetails = () => {
   const [hasBookmark, setHasBookmark] = useState(false);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
-  const API =process.env.NEXT_PUBLIC_API || 'http://localhost:4000'; 
+  const API = process.env.NEXT_PUBLIC_API || "http://localhost:4000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,14 +30,12 @@ const BookDetails = () => {
           Axios.get(`${API}/book/${bookId}`),
           Axios.get(`${API}/book/${bookId}/chapters`),
         ]);
-
         setBook(bookResponse.data);
         setChapters(chaptersResponse.data);
-
         const sessionPage = await useSession();
         setSession(sessionPage);
         const session = await sessionData();
-        const userId = session?.data?.user?.id;
+        const userId = session?.user?.id;
         const bookmarkStatus = await btnDataBookMark(userId, bookId);
         setHasBookmark(bookmarkStatus);
       } catch (error) {
@@ -46,7 +44,6 @@ const BookDetails = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [bookId]);
 
@@ -57,27 +54,34 @@ const BookDetails = () => {
       <p className="text-center mt-10 text-xl text-gray-400">Book not found.</p>
     );
 
-  const generateChapterUrl = (chapterTitle) => {
-    return `/${book.title.replace(/ /g, "-")}/${chapterTitle.replace(/ /g, "-")}`;
+  const generateChapterUrl = (chapterTitle: string) => {
+    return `/${book.title.replace(/ /g, "-")}/${chapterTitle.replace(
+      / /g,
+      "-"
+    )}`;
   };
 
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gray-900 text-white md:p-8 p-0">
+      <div className="min-h-screen bg-gray-900 text-white md:p-8 p-4">
         <div className="relative mb-10">
           <Image
             src={book.coverImage}
             alt={book.title}
             width={800}
             height={400}
-            className="w-full h-96 object-cover rounded-lg"
+            className="w-full h-64 md:h-96 object-cover rounded-lg"
           />
           <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-center p-4">
-            <h1 className="md:text-5xl text-xl font-extrabold mb-4">{book.title}</h1>
-            <p className="text-xl font-semibold text-gray-300">{book.author}</p>
-            <div className="mt-4 md:text-lg font-medium text-gray-400">
-              {book.genre.map((g) => g.name).join(", ")}
+            <h1 className="md:text-5xl text-2xl font-extrabold mb-4">
+              {book.title}
+            </h1>
+            <p className="text-lg md:text-xl font-semibold text-gray-300">
+              {book.author}
+            </p>
+            <div className="mt-4 md:text-lg text-base font-medium text-gray-400">
+              {book.genre.map((g: any) => g.name).join(", ")}
             </div>
             <span
               className={`inline-block px-4 py-2 mt-6 rounded-full text-white ${
@@ -89,7 +93,7 @@ const BookDetails = () => {
           </div>
         </div>
         <div className="flex justify-center p-4">
-          <div className="relative md:w-[350px] w-[175px] md:h-[500px] h-full overflow-hidden rounded-lg shadow-xl flex justify-center">
+          <div className="relative md:w-[350px] w-[175px] md:h-[500px] h-[250px] overflow-hidden rounded-lg shadow-xl flex justify-center">
             <Image
               src={book.coverImage}
               alt={book.title}
@@ -104,28 +108,31 @@ const BookDetails = () => {
           {!hasBookmark && <Bookmark id={book.id} />}
           {hasBookmark && <IoBookmark size={30} />}
         </div>
-        {/* Synopsis */}
         <div className="max-w-5xl mx-auto">
           <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
-            <h2 className="md:text-3xl text-lg font-bold mb-4 text-gray-100">Synopsis</h2>
-            <p className="text-base text-gray-300 leading-relaxed">
+            <h2 className="md:text-3xl text-xl font-bold mb-4 text-gray-100">
+              Synopsis
+            </h2>
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
               {book.synopsis}
             </p>
           </div>
 
           {/* Chapters */}
           <div className="mt-10">
-            <h2 className="text-lg mx-5 md:text-3xl font-bold mb-4 text-gray-100">Chapters</h2>
+            <h2 className="text-lg mx-5 md:text-2xl font-bold mb-4 text-gray-100">
+              Chapters
+            </h2>
             {chapters.length > 0 ? (
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {chapters.map((chapter, index) => (
                   <li
                     key={index}
-                    className="text-lg text-gray-300 bg-gray-700 p-4 rounded-lg shadow-md hover:bg-gray-600 transition"
+                    className="text-base text-gray-300 bg-gray-800 p-2 md:p-3 rounded-md shadow-sm hover:bg-gray-700 transition"
                   >
                     <Link href={generateChapterUrl(chapter.title)}>
                       <span className="mr-2">{index + 1}</span>
-                      {chapter.title}
+                      <span className="truncate">{chapter.title}</span>
                     </Link>
                   </li>
                 ))}
