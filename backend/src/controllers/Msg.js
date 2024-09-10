@@ -19,6 +19,10 @@ const GetAllMsg = async (req, res) => {
 const CreateMsg = async (req, res) => {
   try {
     const { sender, content, img, UserId } = req.body;
+    if (!sender || !content || !img || UserId){
+      return res.status(400).json({message: "err"})
+    }
+    
 
     const newMessage = await prisma.message.create({
       data: {

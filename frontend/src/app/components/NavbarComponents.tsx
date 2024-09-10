@@ -17,7 +17,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = session?.user?.id; 
+        const userId = await session?.user?.id; 
         if (userId) {
           const response = await axios.get(`${Api}/profiles/${userId}`);
           setUserImage(response.data.image || img);
@@ -30,7 +30,7 @@ const Navbar = () => {
     if (session) {
       fetchUser();
     }
-  }, [session]);
+  }, [session , Api]);
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
@@ -160,7 +160,7 @@ const Navbar = () => {
           )}
           {session && (
             <li className="flex flex-col items-center justify-center">
-              <p className="text-white mb-2">{session.user.name}</p>
+              <p className="text-white mb-2">{session?.user?.name}</p>
               <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
                 <Image
                   src={userImage || "/default-avatar.jpg"}

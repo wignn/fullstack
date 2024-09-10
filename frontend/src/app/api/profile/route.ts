@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     console.log("User ID:", userId);
     console.log("Image:", image);
 
-    if (!bio || !userId) {
+    if (!bio || !userId || !image) {
       return NextResponse.json(
         { error: "Bio and user ID are required." },
         { status: 400 }

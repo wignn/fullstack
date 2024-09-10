@@ -1,5 +1,3 @@
-
-import g1 from "../../../public/about.jpg";
 import Link from "next/link";
 
 export default function Home() {
@@ -76,7 +74,7 @@ export default function Home() {
   );
 }
 
-function Feature({ title, description, icon }) {
+function Feature({ title, description, icon } : any) {
   return (
     <div className="flex flex-col items-center text-center">
       <div className="md:w-56 w-28 md:h-80 h-40 md:mb-4 mb-2 relative overflow-hidden rounded-lg">

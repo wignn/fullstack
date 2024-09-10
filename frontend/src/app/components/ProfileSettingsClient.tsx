@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { formatDate } from "@/lib/utils";
 import { data, profileUser } from "../../lib/dataProfile";
 import imgDefault from "../../../public/backimg.jpg";

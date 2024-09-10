@@ -15,12 +15,12 @@ export default function LoginForm() {
     setShowPassword(!showPassword);
   }
 
-  function handleInputChange(event) {
+  function handleInputChange(event : any) {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event:any) {
     event.preventDefault();
     setIsSending(true);
 

@@ -22,6 +22,7 @@ export default function ProfileSettingsClient() {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isImageValid, setIsImageValid] = useState(false); 
 
   const onCropComplete = useCallback(
     (_croppedArea: any, croppedAreaPixels: any) => {
@@ -59,10 +60,16 @@ export default function ProfileSettingsClient() {
       return;
     }
 
+    if (!isImageValid) {
+      setError("Only JPG, PNG, GIF, and WebP formats are allowed.");
+      setSending(false);
+      return; 
+    }
+
     const formData = new FormData();
     formData.append("bio", bio);
-    formData.append("userId", session.user.id);
-
+    formData.append("userId", session?.user?.id);
+    
     if (image && croppedAreaPixels) {
       const croppedImage = await getCroppedImg(preview, croppedAreaPixels);
       formData.append("image", croppedImage);
@@ -71,6 +78,7 @@ export default function ProfileSettingsClient() {
     }
 
     try {
+      
       const response = await fetch("/api/profile", {
         method: "POST",
         body: formData,
@@ -99,12 +107,22 @@ export default function ProfileSettingsClient() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.type.startsWith("image/")) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      setSending(false);
+
+      if (allowedTypes.includes(file.type)) {
         setImage(file);
         setPreview(URL.createObjectURL(file));
+        setIsImageValid(true); 
         setError(null);
       } else {
-        setError("Only image files are allowed.");
+        setError("Only JPG, PNG, GIF, and WebP formats are allowed.");
+        setIsImageValid(false); 
         setImage(null);
         setPreview(null);
       }
@@ -193,11 +211,14 @@ export default function ProfileSettingsClient() {
             <p className="text-green-500 mb-4">{successMessage}</p>
           )}
           {error && <p className="text-red-500 mb-4">{error}</p>}
-
           <button
-            disabled={sending}
+            disabled={sending || !isImageValid}
             type="submit"
-            className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none mb-4"
+            className={`bg-purple-600 text-white py-2 px-4 rounded-md mb-4 ${
+              sending || !isImageValid
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-purple-700"
+            }`}
           >
             {sending ? "Submitting..." : "Update Profile"}
           </button>
