@@ -1,133 +1,155 @@
 "use client";
 
-import { useState } from "react";
-import { saveBook } from "@/lib/actions";
-import { useFormState } from "react-dom";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import axios from "axios";
+import { SingleImageDropzone } from "./image"; 
 import { SubmitButton } from "@/app/components/Book/buttons";
+import { useEdgeStore } from "@/lib/edgeStore";
 
-const CreateBookForm = () => {
-  const [state, formAction] = useFormState(saveBook, null);
-  const [preview, setPreview] = useState<string | null>(null);
+interface FormData {
+  title: string;
+  author: string;
+  synopsis: string;
+  coverImage: File | null;
+}
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+interface FileUrls {
+  url: string;
+  thumbnailUrl: string;
+}
+
+const CreateBookForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    author: "",
+    synopsis: "",
+    coverImage: null,
+  });
+  const [file, setFile] = useState<File>();
+  const [url, setUrl] = useState<FileUrls>();
+  const [progress, setProgress] = useState<number>(0);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const { edgestore } = useEdgeStore();
+
+  useEffect(() => {
+    const uploadUrlToDatabase = async () => {
+      if (url) {
+        try {
+          await axios.post("http://localhost:4000/book/create", {
+            ...formData,
+            coverImage: url.url,
+            publishedAt: new Date(),
+          });
+        } catch (error) {
+          console.error("Error uploading URL to database:", error);
+        }
+      }
+    };
+
+    uploadUrlToDatabase();
+  }, [url, formData]);
+
+  const handleImageUpload = async () => {
     if (file) {
-      setPreview(URL.createObjectURL(file));
+      const result = await edgestore.myPublicImage.upload({
+        file,
+        onProgressChange: (progress) => {
+          setProgress(progress);
+        },
+      });
+      setUrl({
+        url: result.url || "",
+        thumbnailUrl: result.thumbnailUrl || "",
+      });
+      setProgress(0); 
+      console.log(result.url);
+    }
+  };
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.title) errors.title = "Title is required";
+    if (!formData.author) errors.author = "Author is required";
+    if (!formData.synopsis) errors.synopsis = "Synopsis is required";
+    if (!file) errors.coverImage = "Cover image is required";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0; 
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (validateForm()) {
+      await handleImageUpload();
     }
   };
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-8 rounded-lg max-w-lg mx-auto mt-8 shadow-xl border border-gray-300">
-      <form
-        action={formAction}
-        className="bg-white p-6 rounded-lg shadow-lg bg-opacity-95"
-      >
-        {/* Title Field */}
-        <div className="mb-6">
-          <label
-            htmlFor="title"
-            className="block text-sm font-semibold text-gray-700"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-            placeholder="Enter book title..."
-          />
-          {state?.Error?.title && (
-            <p className="mt-2 text-sm text-red-600" id="title-error">
-              {state.Error.title}
-            </p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg bg-opacity-95">
+        {["title", "author", "synopsis"].map((field) => (
+          <div className="mb-6" key={field}>
+            <label htmlFor={field} className="block text-sm font-semibold text-gray-700 capitalize">
+              {field}
+            </label>
+            {field === "synopsis" ? (
+              <textarea
+                name={field}
+                id={field}
+                rows={4}
+                className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                placeholder={`Enter ${field}...`}
+                value={formData[field as keyof FormData]}
+                onChange={handleChange}
+              />
+            ) : (
+              <input
+                type="text"
+                name={field}
+                id={field}
+                className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                placeholder={`Enter ${field}...`}
+                value={formData[field as keyof FormData]}
+                onChange={handleChange}
+              />
+            )}
+            {formErrors[field] && <p className="mt-2 text-sm text-red-600">{formErrors[field]}</p>}
+          </div>
+        ))}
 
-        {/* Author Field */}
         <div className="mb-6">
-          <label
-            htmlFor="author"
-            className="block text-sm font-semibold text-gray-700"
-          >
-            Author
-          </label>
-          <input
-            type="text"
-            name="author"
-            id="author"
-            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-            placeholder="Enter author name..."
-          />
-          {state?.Error?.author && (
-            <p className="mt-2 text-sm text-red-600" id="author-error">
-              {state.Error.author}
-            </p>
-          )}
-        </div>
-
-        {/* Synopsis Field */}
-        <div className="mb-6">
-          <label
-            htmlFor="synopsis"
-            className="block text-sm font-semibold text-gray-700"
-          >
-            Synopsis
-          </label>
-          <textarea
-            name="synopsis"
-            id="synopsis"
-            rows={4}
-            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-            placeholder="Enter a brief synopsis..."
-          />
-          {state?.Error?.synopsis && (
-            <p className="mt-2 text-sm text-red-600" id="synopsis-error">
-              {state.Error.synopsis}
-            </p>
-          )}
-        </div>
-
-        {/* Cover Image Field with Preview */}
-        <div className="mb-6">
-          <label
-            htmlFor="coverImage"
-            className="block text-sm font-semibold text-gray-700"
-          >
+          <label htmlFor="coverImage" className="block text-sm font-semibold text-gray-700">
             Cover Image
           </label>
-          <input
-            type="file"
-            name="coverImage"
-            id="coverImage"
-            accept="image/*"
-            className="mt-2 block w-full p-3 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-            onChange={handleImageChange}
+          <SingleImageDropzone
+            width={200}
+            height={200}
+            value={file}
+            dropzoneOptions={{
+              maxSize: 1024 * 1024 * 1,
+            }}
+            onChange={(file) => {
+              setFile(file);
+            }}
           />
-          {preview && (
-            <div className="mt-4">
-              <img
-                src={preview}
-                alt="Image Preview"
-                className="w-full h-auto max-h-64 object-contain rounded-lg shadow-md"
-              />
-            </div>
-          )}
-          {state?.Error?.coverImage && (
-            <p className="mt-2 text-sm text-red-600" id="coverImage-error">
-              {state.Error.coverImage}
-            </p>
-          )}
+          {formErrors.coverImage && <p className="mt-2 text-sm text-red-600">{formErrors.coverImage}</p>}
         </div>
 
-        {/* Error Message */}
-        {state?.message && (
-          <div className="mb-6" id="message-error" aria-live="polite">
-            <p className="text-sm text-red-600">{state.message}</p>
+        {progress > 0 && (
+          <div className="w-full bg-gray-200 rounded-full mt-4">
+            <div
+              className="bg-blue-500 text-xs font-medium text-black text-center p-0.5 leading-none rounded-full"
+              style={{ width: `${progress}%` }}
+            >
+              {progress}%
+            </div>
           </div>
         )}
 
-        {/* Submit Button */}
         <SubmitButton label="Save" />
       </form>
     </div>

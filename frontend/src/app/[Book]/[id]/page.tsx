@@ -93,7 +93,7 @@ const ChapterContent = () => {
   if (!content) {
     return <div>No content found.</div>;
   }
-
+  
   return (
     <div>
       <Navbar />

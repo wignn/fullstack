@@ -11,7 +11,7 @@ const EmailToAdmin = () => {
   const [isSending, setIsSending] = useState(false);
   const Api = process.env.NEXT_PUBLIC_API || 'http://localhost:4000';
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event : any) => {
     event.preventDefault();
     setIsSending(true);
 

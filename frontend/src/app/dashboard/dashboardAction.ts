@@ -8,12 +8,13 @@ export const GetDashboard = async (query: string) => {
           {
             title: {
               contains: query,
+              mode: 'insensitive'
             },
           },
           {
             author: {
               contains: query,
-
+                 mode: 'insensitive'
             },
           },
         ],

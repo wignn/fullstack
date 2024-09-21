@@ -55,11 +55,14 @@ export const EditButton = ({ id }: { id: string }) => {
   );
 };
 
-export const DeleteButton = ({ id }: { id: any }) => {
-  const DeleteContactWithId = deleteBook.bind(null, id);
-  console.log(`this buton in dataBook${id}`)
+export const DeleteButton = ({ id, onDelete }: { id: string; onDelete: (id: string) => void; }) => {
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    onDelete(id);
+  };
+
   return (
-    <form action={DeleteContactWithId}>
+    <form onSubmit={handleDelete}>
       <button
         type="submit"
         className={`inline-flex items-center justify-center text-white bg-transparent border ${BUTTON_RADIUS} border-gray-300 hover:bg-gray-100 ${BUTTON_PADDING_X} ${BUTTON_PADDING_Y}`}

@@ -44,3 +44,53 @@ exports.getChapter = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch chapters" });
   }
 };
+
+exports.bookCreate = async(req, res)=>{
+  try{
+    const {title, author, synopsis, coverImage, publishedAt} = req.body
+    const result = await prisma.book.create({
+      data:{
+        title,
+        author,
+        synopsis,
+        coverImage,
+        publishedAt
+      }
+    })
+    res.json(result)
+  }catch(err){
+    console.error("Error creating book:", err);
+    res.status(500).json({ error: "Failed to create book" });
+  }
+}
+exports.bookUpdate = async(req, res)=>{
+  try{
+    const {title, author, synopsis, coverImage, publishedAt, bookId} = req.body
+    const result = await prisma.book.update({
+      where:{id: bookId},
+      data:{
+        title,
+        author,
+        synopsis,
+        coverImage,
+        publishedAt
+      }
+    })
+    res.json(result)
+  }catch(err){
+    console.error("Error update book:", err);
+    res.status(500).json({ error: "Failed to update book" });
+  }
+}
+exports.deleteUpdate = async(req, res)=>{
+  try{
+    const {bookId} = req.body
+    const result = await prisma.book.delete({
+      where:{id: bookId},
+    })
+    res.json(result)
+  }catch(err){
+    console.error("Error update book:", err);
+    res.status(500).json({ error: "Failed to update book" });
+  }
+}

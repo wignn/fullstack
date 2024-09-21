@@ -28,7 +28,7 @@ export const saveChapter = async (prevState: any, formData: FormData) => {
   try {
     console.log("Validated data:", validatedFields.data);
 
-    // Create the chapter
+
     await prisma.chapter.create({
       data: {
         title: validatedFields.data.title,

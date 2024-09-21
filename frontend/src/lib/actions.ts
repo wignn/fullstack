@@ -22,78 +22,78 @@ const BookSchema = z.object({
   synopsis: z.string().optional(),
 });
 
-export const saveBook = async (prevState: any, formData: FormData) => {
-  const validatedFields = BookSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  );
+// export const saveBook = async (prevState: any, formData: FormData) => {
+//   const validatedFields = BookSchema.safeParse(
+//     Object.fromEntries(formData.entries())
+//   );
 
-  if (!validatedFields.success) {
-    // console.log("Validation failed:", validatedFields.error.flatten().fieldErrors); // Debugging
-    return {
-      Error: validatedFields.error.flatten().fieldErrors,
-    };
-  }
+//   if (!validatedFields.success) {
+//     // console.log("Validation failed:", validatedFields.error.flatten().fieldErrors); // Debugging
+//     return {
+//       Error: validatedFields.error.flatten().fieldErrors,
+//     };
+//   }
 
-  const coverImage = formData.get('coverImage') as File | null;
-  let coverImageUrl: string | null = null;
+//   const coverImage = formData.get('coverImage') as File | null;
+//   let coverImageUrl: string | null = null;
 
-  if (coverImage) {
-    const buffer = Buffer.from(await coverImage.arrayBuffer());
-    const relativeUploadDir = `/uploads/${new Date().toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }).replace(/\//g, '-')}`;
-    const uploadDir = join(process.cwd(), 'public', relativeUploadDir);
+//   if (coverImage) {
+//     const buffer = Buffer.from(await coverImage.arrayBuffer());
+//     const relativeUploadDir = `/uploads/${new Date().toLocaleDateString('id-ID', {
+//       day: '2-digit',
+//       month: '2-digit',
+//       year: 'numeric',
+//     }).replace(/\//g, '-')}`;
+//     const uploadDir = join(process.cwd(), 'public', relativeUploadDir);
 
-    try {
-      await stat(uploadDir);
-    } catch (e: any) {
-      if (e.code === 'ENOENT') {
-        await mkdir(uploadDir, { recursive: true });
-      } else {
-        console.error('Error creating directory for upload', e);
-        return NextResponse.json({ error: 'Server error' }, { status: 500 });
-      }
-    }
+//     try {
+//       await stat(uploadDir);
+//     } catch (e: any) {
+//       if (e.code === 'ENOENT') {
+//         await mkdir(uploadDir, { recursive: true });
+//       } else {
+//         console.error('Error creating directory for upload', e);
+//         return NextResponse.json({ error: 'Server error' }, { status: 500 });
+//       }
+//     }
 
-    try {
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const mimeType = mime.lookup(coverImage.name);
-      // console.log(`MIME Type: ${mimeType}`); // Log the MIME type
+//     try {
+//       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+//       const mimeType = mime.lookup(coverImage.name);
+//       // console.log(`MIME Type: ${mimeType}`); // Log the MIME type
 
-      if (!mimeType) {
-        throw new Error('Unable to determine MIME type');
-      }
+//       if (!mimeType) {
+//         throw new Error('Unable to determine MIME type');
+//       }
 
-      const fileExtension = mimeType.split('/').pop();
-      const filename = `${coverImage.name.replace(/\.[^/.]+$/, '')}-${uniqueSuffix}.${fileExtension}`;
-      await writeFile(`${uploadDir}/${filename}`, buffer);
-      coverImageUrl = `${relativeUploadDir}/${filename}`;
-    } catch (e) {
-      console.error('Error while uploading file', e);
-      return { message: "Failed to upload image" };
-    }
-  }
+//       const fileExtension = mimeType.split('/').pop();
+//       const filename = `${coverImage.name.replace(/\.[^/.]+$/, '')}-${uniqueSuffix}.${fileExtension}`;
+//       await writeFile(`${uploadDir}/${filename}`, buffer);
+//       coverImageUrl = `${relativeUploadDir}/${filename}`;
+//     } catch (e) {
+//       console.error('Error while uploading file', e);
+//       return { message: "Failed to upload image" };
+//     }
+//   }
 
-  try {
-    await prisma.book.create({
-      data: {
-        title: validatedFields.data.title,
-        author: validatedFields.data.author,
-        synopsis: validatedFields.data.synopsis,
-        coverImage: coverImageUrl || validatedFields.data.coverImage,
-        publishedAt: validatedFields.data.publishedAt || new Date(),
-      },
-    });
-  } catch (error) {
-    console.error("Failed to create book:", error);
-    return { message: "Failed to create book" };
-  }
+//   try {
+//     await prisma.book.create({
+//       data: {
+//         title: validatedFields.data.title,
+//         author: validatedFields.data.author,
+//         synopsis: validatedFields.data.synopsis,
+//         coverImage: coverImageUrl || validatedFields.data.coverImage,
+//         publishedAt: validatedFields.data.publishedAt || new Date(),
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Failed to create book:", error);
+//     return { message: "Failed to create book" };
+//   }
 
-  revalidatePath("/DataBook");
-  redirect("/DataBook");
-};
+//   revalidatePath("/DataBook");
+//   redirect("/DataBook");
+// };
 
 export const updateBook = async (id: string, prevState: any, formData: FormData) => {
   const validatedFields = BookSchema.safeParse(
